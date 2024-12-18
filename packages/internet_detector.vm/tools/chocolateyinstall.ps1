@@ -21,10 +21,9 @@ Start-Process -FilePath 'cmd.exe' -WorkingDirectory $toolDir -ArgumentList "/c p
 $imagesPath = Join-Path $packageToolDir "images"
 Copy-Item "$imagesPath\*" ${Env:VM_COMMON_DIR} -Force
 
-VM-Install-Shortcut -toolName $toolName -category $category -executablePath "$toolDir/$toolName.exe"
+VM-Install-Shortcut -toolName $toolName -category $category -executablePath "$toolDir\$toolName.exe"
 
-# TODO - Uncomment when FakeNet BlackList for DNS is fixed/addressed. https://github.com/mandiant/flare-fakenet-ng/issues/190
-# # Create scheduled task for tool to run every 2 minutes.
-# $action = New-ScheduledTaskAction -Execute $rawToolPath
-# $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 2)
-# Register-ScheduledTask -Action $action -Trigger $trigger -TaskName 'Internet Detector' -Force
+# Create scheduled task for tool to run every 2 minutes.
+$action = New-ScheduledTaskAction -Execute "$toolDir\$toolName.exe"
+$trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 1)
+Register-ScheduledTask -Action $action -Trigger $trigger -TaskName 'Internet Detector' -Force
